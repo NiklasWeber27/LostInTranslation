@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Songrätsel des Tages 🎵</title>
+<style>
+:root{
+  --bg:#f3f6fb; --card:#ffffffcc; --muted:#6b7280;
+  --accent:#007aff; --success:#16a34a; --danger:#ef4444;
+  --glass-border:rgba(255,255,255,0.6);
+  --radius:16px; --shadow:0 8px 30px rgba(18,25,40,0.08);
+}
+[data-theme="dark"]{
+  --bg:linear-gradient(180deg,#080c15,#0b0f1a);
+  --card:rgba(15,18,25,0.6);
+  --muted:#9aa4b2; --accent:#4cb2ff;
+  --glass-border:rgba(255,255,255,0.05);
+  --shadow:0 8px 28px rgba(0,0,0,0.6);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:30px;overflow:auto}
+.frame{max-width:900px;width:100%;background:var(--card);border-radius:22px;padding:26px;border:1px solid var(--glass-border);backdrop-filter:blur(10px) saturate(140%);box-shadow:var(--shadow)}
+header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+h1{font-size:22px;margin:0}
+p.sub{color:var(--muted);font-size:13px}
+button{cursor:pointer;border:none;border-radius:10px;font-weight:600}
+.btn{padding:9px 12px}
+.primary{background:linear-gradient(90deg,var(--accent),#63b6ff);color:#fff}
+.ghost{background:transparent;color:var(--muted)}
+main{display:flex;flex-wrap:wrap;gap:18px}
+.card{flex:2;min-width:300px;padding:14px;border:1px solid var(--glass-border);border-radius:14px;background:var(--card)}
+.side{flex:1;min-width:260px;display:flex;flex-direction:column;gap:12px}
+.text-area{font-family:ui-monospace,Menlo,monospace;white-space:pre-wrap;height:320px;overflow:auto;padding:10px;font-size:15px;border-radius:10px;background:transparent;border:1px dashed rgba(0,0,0,0.1)}
+.panel{background:var(--card);padding:12px;border-radius:12px;border:1px solid var(--glass-border)}
+input[type="text"]{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(0,0,0,0.1);font-size:15px}
+.muted{color:var(--muted);font-size:13px}
+footer{margin-top:14px;text-align:center;font-size:13px;color:var(--muted)}
+@media(max-width:860px){main{flex-direction:column}.text-area{height:280px}}
+</style>
+</head>
+<body>
+<div class="frame" id="app" data-theme="light">
+<header>
+  <div>
+    <h1>Songrätsel des Tages 🎵</h1>
+    <p class="sub">1 Versuch pro Tag • Automatische Übersetzung • Fallback-ready</p>
+  </div>
+  <div>
+    <button class="btn ghost" id="themeBtn">🌙</button>
+    <button class="btn ghost" id="retryBtn">🔄</button>
+  </div>
+</header>
+
+<main>
+  <section class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div class="muted">Datum: <span id="dateLabel"></span></div>
+      <div class="muted">Status: <span id="statusText">lade…</span></div>
+    </div>
+    <div id="translatedText" class="text-area">Songtext wird geladen…</div>
+  </section>
+
+  <aside class="side">
+    <div class="panel">
+      <div class="muted">Dein Tipp</div>
+      <input id="guessInput" type="text" placeholder="Song oder Künstler..." autocomplete="off" />
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn primary" id="guessBtn">Raten</button>
+        <button class="btn ghost" id="revealBtn">👀 Lösung</button>
+      </div>
+      <div id="result" style="margin-top:10px;font-weight:700"></div>
+    </div>
+
+    <div class="panel">
+      <div class="muted">🔥 Streak</div>
+      <div style="font-size:18px;font-weight:700">
+        Heute: <span id="streak">0</span> • Best: <span id="bestStreak">0</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="muted">Hinweis</div>
+      <p id="hint" class="muted">Noch keine Hinweise</p>
+      <button class="btn ghost" id="hintBtn" style="margin-top:8px">💡 Hinweis (-1 Punkt)</button>
+    </div>
+  </aside>
+</main>
+
+<footer><small>Du kannst nur einmal pro Tag spielen. Komme morgen wieder für das nächste Lied!</small></footer>
+</div>
+
+<script>
+async function loadGameFromJson(){
+  const today = new Date().toISOString().slice(0,10);
+  const translatedTextEl = document.getElementById('translatedText');
+  const statusText = document.getElementById('statusText');
+
+  try {
+    const res = await fetch('./data/song_of_the_day.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error("Keine Datei gefunden");
+    const j = await res.json();
+
+    if (j.date !== today) {
+      translatedTextEl.textContent = "Das heutige Rätsel wurde noch nicht generiert!";
+      statusText.textContent = "Warte auf Update";
+      return;
+    }
+
+    window.current = { artist: j.artist, title: j.title };
+    translatedTextEl.textContent = j.translated;
+    statusText.textContent = "Bereit zum Raten 🎵";
+  } catch (e) {
+    translatedTextEl.textContent = "Fehler beim Laden der Datei.";
+    statusText.textContent = "Fehler";
+  }
+}
+
+loadGameFromJson();
+</script>
+
+</body>
+</html>
