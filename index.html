@@ -91,10 +91,13 @@ footer{margin-top:14px;text-align:center;font-size:13px;color:var(--muted)}
 </div>
 
 <script>
-async function loadGameFromJson(){
-  const today = new Date().toISOString().slice(0,10);
+async function loadGameFromJson() {
+  const today = new Date().toISOString().slice(0, 10);
   const translatedTextEl = document.getElementById('translatedText');
   const statusText = document.getElementById('statusText');
+  const dateLabel = document.getElementById('dateLabel');
+
+  dateLabel.textContent = new Date().toLocaleDateString("de-DE");
 
   try {
     const res = await fetch('./data/song_of_the_day.json', { cache: 'no-store' });
@@ -108,7 +111,7 @@ async function loadGameFromJson(){
     }
 
     window.current = { artist: j.artist, title: j.title };
-    translatedTextEl.textContent = j.translated;
+    translatedTextEl.textContent = j.translated || j.lyrics || "Kein Text verfügbar.";
     statusText.textContent = "Bereit zum Raten 🎵";
   } catch (e) {
     translatedTextEl.textContent = "Fehler beim Laden der Datei.";
@@ -116,8 +119,90 @@ async function loadGameFromJson(){
   }
 }
 
+// ------------------------------------------------------
+// 🧠 Spiellogik & Buttons
+// ------------------------------------------------------
+const guessBtn = document.getElementById("guessBtn");
+const revealBtn = document.getElementById("revealBtn");
+const hintBtn = document.getElementById("hintBtn");
+const themeBtn = document.getElementById("themeBtn");
+
+const guessInput = document.getElementById("guessInput");
+const resultEl = document.getElementById("result");
+const hintEl = document.getElementById("hint");
+const streakEl = document.getElementById("streak");
+const bestStreakEl = document.getElementById("bestStreak");
+
+let streak = Number(localStorage.getItem("sr_streak") || 0);
+let best = Number(localStorage.getItem("sr_bestStreak") || 0);
+streakEl.textContent = streak;
+bestStreakEl.textContent = best;
+
+function normalize(s) {
+  return (s || "").toLowerCase().replace(/[^a-z0-9äöüß ]/gi, "").trim();
+}
+
+function saveProgress(reset = false) {
+  const key = new Date().toISOString().slice(0, 10);
+  localStorage.setItem("sr_lastDay", key);
+  if (reset) {
+    streak = 0;
+  } else {
+    streak++;
+    if (streak > best) best = streak;
+  }
+  localStorage.setItem("sr_streak", streak);
+  localStorage.setItem("sr_bestStreak", best);
+  streakEl.textContent = streak;
+  bestStreakEl.textContent = best;
+}
+
+guessBtn.addEventListener("click", () => {
+  if (!window.current) return;
+  const guess = normalize(guessInput.value);
+  const a = normalize(window.current.artist);
+  const t = normalize(window.current.title);
+
+  if (guess.includes(a) || guess.includes(t)) {
+    resultEl.style.color = "var(--success)";
+    resultEl.textContent = `✅ Richtig! ${window.current.artist} – ${window.current.title}`;
+    saveProgress(false);
+  } else {
+    resultEl.style.color = "var(--danger)";
+    resultEl.textContent = "❌ Falsch — versuch’s morgen wieder!";
+    saveProgress(true);
+  }
+  guessBtn.disabled = true;
+  guessInput.disabled = true;
+});
+
+revealBtn.addEventListener("click", () => {
+  if (!window.current) return;
+  resultEl.style.color = "var(--muted)";
+  resultEl.textContent = `👀 Lösung: ${window.current.artist} – ${window.current.title}`;
+  saveProgress(true);
+  guessBtn.disabled = true;
+  guessInput.disabled = true;
+});
+
+hintBtn.addEventListener("click", () => {
+  if (!window.current) return;
+  hintEl.textContent = `Künstler beginnt mit "${window.current.artist[0]}".`;
+});
+
+themeBtn.addEventListener("click", () => {
+  const app = document.getElementById("app");
+  const cur = app.getAttribute("data-theme") === "dark" ? "light" : "dark";
+  app.setAttribute("data-theme", cur);
+  themeBtn.textContent = cur === "dark" ? "☀️" : "🌙";
+});
+
+document.getElementById("retryBtn").addEventListener("click", loadGameFromJson);
+
+// Initial starten
 loadGameFromJson();
 </script>
+
 
 </body>
 </html>
