@@ -2,27 +2,31 @@ name: Generate Song of the Day
 
 on:
   schedule:
-    - cron: '0 6 * * *'   # UTC: täglich um 06:00 UTC (anpassen)
+    - cron: '0 6 * * *'   # Täglich 06:00 UTC (07:00 MEZ)
   workflow_dispatch:      # erlaubt manuelles Starten
+
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           persist-credentials: true
 
-      - name: Use Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
-      - name: Install (optional)
-        run: npm ci || echo "no package.json"
+      - name: Install dependencies (optional)
+        run: npm ci || echo "No dependencies"
 
-      - name: Run generator
+      - name: Run generator script
         run: node scripts/generate_song.js
 
       - name: Commit and push if changed
