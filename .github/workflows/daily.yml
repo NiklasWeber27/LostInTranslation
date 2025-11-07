@@ -1,0 +1,38 @@
+name: Generate Song of the Day
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # UTC: täglich um 06:00 UTC (anpassen)
+  workflow_dispatch:      # erlaubt manuelles Starten
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install (optional)
+        run: npm ci || echo "no package.json"
+
+      - name: Run generator
+        run: node scripts/generate_song.js
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add data/song_of_the_day.json
+            git commit -m "chore: update song_of_the_day.json (${{ github.run_number }})"
+            git push
+          else
+            echo "no changes"
+          fi
