@@ -27,8 +27,9 @@ jobs:
       - name: Set OpenAI API Key
         run: echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
 
-      - name: Install dependencies (optional)
-        run: npm ci || echo "No dependencies"
+      - name: Install dependencies
+        run: npm install
+
 
       - name: Run generator script
         run: node scripts/generate_song.js
