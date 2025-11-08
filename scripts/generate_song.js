@@ -6,8 +6,7 @@ const CACHE_FILE = "data/cache_translations.json";
 const OUTPUT_FILE = "data/song_of_the_day.json";
 
 async function translateText(text, lang = "de") {
-   const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${lang}`;
-
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${lang}`;
   try {
     const res = await fetch(url);
     const data = await res.json();
