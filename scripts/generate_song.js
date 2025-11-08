@@ -1,7 +1,10 @@
-const fs = require("fs");
-const path = require("path");
-const fetch = (...args) => import("node-fetch").then(({default: fetch}) => fetch(...args));
+import fs from "fs";
+import path from "path";
+import OpenAI from "openai";
 
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 const songs = [
   { artist: "Coldplay", title: "Yellow" },
@@ -13,70 +16,63 @@ const songs = [
   { artist: "Imagine Dragons", title: "Believer" },
   { artist: "Elton John", title: "Rocket Man" },
   { artist: "ABBA", title: "Dancing Queen" },
-  { artist: "Queen", title: "Bohemian Rhapsody" }
+  { artist: "Queen", title: "Bohemian Rhapsody" },
 ];
-
-const fallbackMap = {
-  "Coldplay Yellow": "Look at the stars...",
-  "Adele Hello": "Hello, it's me...",
-  "Ed Sheeran Perfect": "I found a love for me...",
-  "Taylor Swift Lover": "We could leave the Christmas lights up...",
-  "The Beatles Hey Jude": "Hey Jude, don't make it bad...",
-  "Billie Eilish Ocean Eyes": "I've been watching you for some time...",
-  "Imagine Dragons Believer": "First things first...",
-  "Elton John Rocket Man": "She packed my bags last night pre-flight...",
-  "ABBA Dancing Queen": "You can dance, you can jive...",
-  "Queen Bohemian Rhapsody": "Is this the real life? Is this just fantasy?"
-};
 
 const index = new Date().getDate() % songs.length;
 const song = songs[index];
-const key = `${song.artist} ${song.title}`;
 
-async function fetchLyrics(artist, title) {
+async function getLyricsAndTranslate(artist, title) {
+  const prompt = `
+Gib mir den vollständigen englischen Songtext zu "${title}" von ${artist}.
+Antworte NUR mit dem Songtext, ohne Erklärung oder Zusatztexte.
+  `;
+
+  const translationPrompt = `
+Übersetze folgenden Songtext ins Deutsche (aber behalte den poetischen Stil bei):
+`;
+
   try {
-    const res = await fetch(`https://api.lyrics.ovh/v1/${artist}/${title}`);
-    const data = await res.json();
-    return data.lyrics;
-  } catch {
-    return null;
-  }
-}
+    console.log("🎵 Hole Lyrics von der KI...");
+    const lyricsRes = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.7,
+    });
 
-async function translateChunk(chunk) {
-  const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk)}&langpair=en|de`);
-  const data = await res.json();
-  return data.responseData.translatedText || "";
-}
+    const lyrics = lyricsRes.choices[0].message.content.trim();
 
-async function translateFull(text) {
-  const parts = [];
-  for (let i = 0; i < text.length; i += 400) {
-    const chunk = text.slice(i, i + 400);
-    const translated = await translateChunk(chunk);
-    parts.push(translated);
-    await new Promise(r => setTimeout(r, 300));
+    console.log("🌍 Übersetze Text...");
+    const transRes = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: "Du bist ein professioneller Übersetzer." },
+        { role: "user", content: translationPrompt + "\n\n" + lyrics },
+      ],
+      temperature: 0.6,
+    });
+
+    const translated = transRes.choices[0].message.content.trim();
+    return { lyrics, translated };
+  } catch (err) {
+    console.error("Fehler beim KI-Abruf:", err);
+    return { lyrics: "Keine Lyrics gefunden.", translated: "Keine Übersetzung." };
   }
-  return parts.join(" ");
 }
 
 async function main() {
-  let lyrics = await fetchLyrics(song.artist, song.title);
-  if (!lyrics) lyrics = fallbackMap[key];
-
-  console.log("Übersetze:", key);
-  const translated = await translateFull(lyrics);
+  const { lyrics, translated } = await getLyricsAndTranslate(song.artist, song.title);
 
   const result = {
     date: new Date().toISOString().slice(0, 10),
     artist: song.artist,
     title: song.title,
-    translated: translated || lyrics,
+    translated,
   };
 
   const outputPath = path.join("data", "song_of_the_day.json");
   fs.writeFileSync(outputPath, JSON.stringify(result, null, 2));
-  console.log("✅ Fertig: data/song_of_the_day.json aktualisiert!");
+  console.log("✅ Fertig: Song gespeichert in data/song_of_the_day.json");
 }
 
 main();

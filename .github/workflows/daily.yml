@@ -23,6 +23,10 @@ jobs:
         with:
           node-version: 20
 
+      # 🔑 Stelle sicher, dass der OpenAI-Key als Umgebungsvariable verfügbar ist
+      - name: Set OpenAI API Key
+        run: echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
+
       - name: Install dependencies (optional)
         run: npm ci || echo "No dependencies"
 
