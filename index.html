@@ -111,8 +111,17 @@ async function loadGameFromJson() {
     }
 
     window.current = { artist: j.artist, title: j.title };
-    translatedTextEl.textContent = j.translated || j.lyrics || "Kein Text verfügbar.";
-    statusText.textContent = "Bereit zum Raten 🎵";
+if (j.translation) {
+  translatedTextEl.textContent = j.translation;
+  statusText.textContent = "Übersetzung geladen 🇩🇪";
+} else if (j.translated) {
+  translatedTextEl.textContent = j.translated;
+  statusText.textContent = "Übersetzung (alt) geladen 🇩🇪";
+} else {
+  translatedTextEl.textContent = j.lyrics || "Kein Text verfügbar.";
+  statusText.textContent = "Englischer Text 🇬🇧";
+}
+
   } catch (e) {
     translatedTextEl.textContent = "Fehler beim Laden der Datei.";
     statusText.textContent = "Fehler";
