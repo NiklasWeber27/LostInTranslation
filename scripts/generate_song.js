@@ -1,78 +1,56 @@
 import fs from "fs";
 import path from "path";
-import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const RAW_FILE = "data/songs_raw.json";
+const CACHE_FILE = "data/cache_translations.json";
+const OUTPUT_FILE = "data/song_of_the_day.json";
 
-const songs = [
-  { artist: "Coldplay", title: "Yellow" },
-  { artist: "Adele", title: "Hello" },
-  { artist: "Ed Sheeran", title: "Perfect" },
-  { artist: "Taylor Swift", title: "Lover" },
-  { artist: "The Beatles", title: "Hey Jude" },
-  { artist: "Billie Eilish", title: "Ocean Eyes" },
-  { artist: "Imagine Dragons", title: "Believer" },
-  { artist: "Elton John", title: "Rocket Man" },
-  { artist: "ABBA", title: "Dancing Queen" },
-  { artist: "Queen", title: "Bohemian Rhapsody" },
-];
-
-const index = new Date().getDate() % songs.length;
-const song = songs[index];
-
-async function getLyricsAndTranslate(artist, title) {
-  const prompt = `
-Gib mir den vollständigen englischen Songtext zu "${title}" von ${artist}.
-Antworte NUR mit dem Songtext, ohne Erklärung oder Zusatztexte.
-  `;
-
-  const translationPrompt = `
-Übersetze folgenden Songtext ins Deutsche (aber behalte den poetischen Stil bei):
-`;
-
+async function translateText(text, lang = "de") {
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${lang}`;
   try {
-    console.log("🎵 Hole Lyrics von der KI...");
-    const lyricsRes = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.7,
-    });
-
-    const lyrics = lyricsRes.choices[0].message.content.trim();
-
-    console.log("🌍 Übersetze Text...");
-    const transRes = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: "Du bist ein professioneller Übersetzer." },
-        { role: "user", content: translationPrompt + "\n\n" + lyrics },
-      ],
-      temperature: 0.6,
-    });
-
-    const translated = transRes.choices[0].message.content.trim();
-    return { lyrics, translated };
+    const res = await fetch(url);
+    const data = await res.json();
+    return data?.responseData?.translatedText || text;
   } catch (err) {
-    console.error("Fehler beim KI-Abruf:", err);
-    return { lyrics: "Keine Lyrics gefunden.", translated: "Keine Übersetzung." };
+    console.error("⚠️ Fehler bei Übersetzung:", err);
+    return text;
   }
 }
 
 async function main() {
-  const { lyrics, translated } = await getLyricsAndTranslate(song.artist, song.title);
+  console.log("🎵 Generiere Song des Tages...");
+
+  const songs = JSON.parse(fs.readFileSync(RAW_FILE, "utf-8"));
+  const cache = fs.existsSync(CACHE_FILE)
+    ? JSON.parse(fs.readFileSync(CACHE_FILE, "utf-8"))
+    : {};
+
+  const song = songs[new Date().getDate() % songs.length];
+  const key = `${song.artist} - ${song.title}`;
+
+  let translated = cache[key];
+
+  if (!translated) {
+    console.log(`🌐 Übersetze "${key}"...`);
+    translated = await translateText(song.lyrics, "de");
+    cache[key] = translated;
+    fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2));
+  } else {
+    console.log(`🗂 Übersetzung aus Cache geladen: ${key}`);
+  }
 
   const result = {
     date: new Date().toISOString().slice(0, 10),
     artist: song.artist,
     title: song.title,
-    translated,
+    lyrics: song.lyrics,
+    translation: translated
   };
 
-  const outputPath = path.join("data", "song_of_the_day.json");
-  fs.writeFileSync(outputPath, JSON.stringify(result, null, 2));
-  console.log("✅ Fertig: Song gespeichert in data/song_of_the_day.json");
+  fs.mkdirSync("data", { recursive: true });
+  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(result, null, 2));
+
+  console.log(`✅ Fertig: ${OUTPUT_FILE} aktualisiert.`);
 }
 
 main();

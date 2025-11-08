@@ -2,8 +2,8 @@ name: Generate Song of the Day
 
 on:
   schedule:
-    - cron: '0 6 * * *'   # Täglich 06:00 UTC (07:00 MEZ)
-  workflow_dispatch:      # erlaubt manuelles Starten
+    - cron: '0 6 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -15,21 +15,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          persist-credentials: true
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-
-      # 🔑 Stelle sicher, dass der OpenAI-Key als Umgebungsvariable verfügbar ist
-      - name: Set OpenAI API Key
-        run: echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
-
-      - name: Install dependencies
-        run: npm install
-
 
       - name: Run generator script
         run: node scripts/generate_song.js
@@ -39,8 +29,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if [ -n "$(git status --porcelain)" ]; then
-            git add data/song_of_the_day.json
-            git commit -m "chore: update song_of_the_day.json (${{ github.run_number }})"
+            git add data/song_of_the_day.json data/cache_translations.json
+            git commit -m "update: song_of_the_day.json (${{ github.run_number }})"
             git push
           else
             echo "no changes"
