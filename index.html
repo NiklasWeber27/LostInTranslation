@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Songrätsel des Tages 🎵</title>
+<title>Lost in Translation 🎯</title>
 <style>
 :root{
-  --bg:#f3f6fb; --card:#ffffffcc; --muted:#6b7280;
+  --bg:#eef3fa; --card:#ffffffcc; --muted:#6b7280;
   --accent:#007aff; --success:#16a34a; --danger:#ef4444;
   --glass-border:rgba(255,255,255,0.6);
   --radius:16px; --shadow:0 8px 30px rgba(18,25,40,0.08);
@@ -19,21 +19,51 @@
   --shadow:0 8px 28px rgba(0,0,0,0.6);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:30px;overflow:auto}
-.frame{max-width:900px;width:100%;background:var(--card);border-radius:22px;padding:26px;border:1px solid var(--glass-border);backdrop-filter:blur(10px) saturate(140%);box-shadow:var(--shadow)}
+body{
+  font-family:-apple-system,Segoe UI,Roboto,Arial;
+  background:var(--bg);
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  padding:30px;
+  overflow:auto;
+  transition:background 0.4s;
+}
+.frame{
+  max-width:900px;width:100%;
+  background:var(--card);
+  border-radius:22px;
+  padding:26px;
+  border:1px solid var(--glass-border);
+  backdrop-filter:blur(12px) saturate(160%);
+  box-shadow:var(--shadow);
+  animation:fadeIn .4s ease;
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px}
-h1{font-size:22px;margin:0}
+h1{font-size:24px;margin:0}
 p.sub{color:var(--muted);font-size:13px}
-button{cursor:pointer;border:none;border-radius:10px;font-weight:600}
+button{cursor:pointer;border:none;border-radius:10px;font-weight:600;transition:all 0.2s}
 .btn{padding:9px 12px}
-.primary{background:linear-gradient(90deg,var(--accent),#63b6ff);color:#fff}
+.primary{background:linear-gradient(90deg,var(--accent),#63b6ff);color:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.1)}
+.primary:hover{transform:scale(1.03)}
 .ghost{background:transparent;color:var(--muted)}
+.ghost:hover{color:var(--accent)}
 main{display:flex;flex-wrap:wrap;gap:18px}
 .card{flex:2;min-width:300px;padding:14px;border:1px solid var(--glass-border);border-radius:14px;background:var(--card)}
 .side{flex:1;min-width:260px;display:flex;flex-direction:column;gap:12px}
-.text-area{font-family:ui-monospace,Menlo,monospace;white-space:pre-wrap;height:320px;overflow:auto;padding:10px;font-size:15px;border-radius:10px;background:transparent;border:1px dashed rgba(0,0,0,0.1)}
+.text-area{
+  font-family:ui-monospace,Menlo,monospace;
+  white-space:pre-wrap;height:320px;overflow:auto;
+  padding:10px;font-size:15px;border-radius:10px;
+  background:transparent;border:1px dashed rgba(0,0,0,0.1)
+}
 .panel{background:var(--card);padding:12px;border-radius:12px;border:1px solid var(--glass-border)}
-input[type="text"]{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(0,0,0,0.1);font-size:15px}
+input[type="text"]{
+  width:100%;padding:10px;border-radius:10px;
+  border:1px solid rgba(0,0,0,0.1);font-size:15px
+}
 .muted{color:var(--muted);font-size:13px}
 footer{margin-top:14px;text-align:center;font-size:13px;color:var(--muted)}
 @media(max-width:860px){main{flex-direction:column}.text-area{height:280px}}
@@ -43,12 +73,11 @@ footer{margin-top:14px;text-align:center;font-size:13px;color:var(--muted)}
 <div class="frame" id="app" data-theme="light">
 <header>
   <div>
-    <h1>Songrätsel des Tages 🎵</h1>
-    <p class="sub">1 Versuch pro Tag • Automatische Übersetzung • Fallback-ready</p>
+    <h1>Lost in Translation 🌍</h1>
+    <p class="sub">3 Versuche • Übersetze das Rätsel richtig • Baue deinen Streak auf!</p>
   </div>
   <div>
     <button class="btn ghost" id="themeBtn">🌙</button>
-    <button class="btn ghost" id="retryBtn">🔄</button>
   </div>
 </header>
 
@@ -58,7 +87,7 @@ footer{margin-top:14px;text-align:center;font-size:13px;color:var(--muted)}
       <div class="muted">Datum: <span id="dateLabel"></span></div>
       <div class="muted">Status: <span id="statusText">lade…</span></div>
     </div>
-    <div id="translatedText" class="text-area">Songtext wird geladen…</div>
+    <div id="translatedText" class="text-area">Text wird geladen…</div>
   </section>
 
   <aside class="side">
@@ -70,6 +99,7 @@ footer{margin-top:14px;text-align:center;font-size:13px;color:var(--muted)}
         <button class="btn ghost" id="revealBtn">👀 Lösung</button>
       </div>
       <div id="result" style="margin-top:10px;font-weight:700"></div>
+      <p class="muted" id="triesLeft"></p>
     </div>
 
     <div class="panel">
@@ -80,14 +110,14 @@ footer{margin-top:14px;text-align:center;font-size:13px;color:var(--muted)}
     </div>
 
     <div class="panel">
-      <div class="muted">Hinweis</div>
+      <div class="muted">💡 Hinweis</div>
       <p id="hint" class="muted">Noch keine Hinweise</p>
-      <button class="btn ghost" id="hintBtn" style="margin-top:8px">💡 Hinweis (-1 Punkt)</button>
+      <button class="btn ghost" id="hintBtn" style="margin-top:8px">Tipp anzeigen</button>
     </div>
   </aside>
 </main>
 
-<footer><small>Du kannst nur einmal pro Tag spielen. Komme morgen wieder für das nächste Lied!</small></footer>
+<footer><small>Du hast nur 3 Versuche. Errate die Übersetzung und halte deinen Streak am Leben!</small></footer>
 </div>
 
 <script>
@@ -96,7 +126,6 @@ async function loadGameFromJson() {
   const translatedTextEl = document.getElementById('translatedText');
   const statusText = document.getElementById('statusText');
   const dateLabel = document.getElementById('dateLabel');
-
   dateLabel.textContent = new Date().toLocaleDateString("de-DE");
 
   try {
@@ -111,16 +140,8 @@ async function loadGameFromJson() {
     }
 
     window.current = { artist: j.artist, title: j.title };
-if (j.translation) {
-  translatedTextEl.textContent = j.translation;
-  statusText.textContent = "Übersetzung geladen 🇩🇪";
-} else if (j.translated) {
-  translatedTextEl.textContent = j.translated;
-  statusText.textContent = "Übersetzung (alt) geladen 🇩🇪";
-} else {
-  translatedTextEl.textContent = j.lyrics || "Kein Text verfügbar.";
-  statusText.textContent = "Englischer Text 🇬🇧";
-}
+    translatedTextEl.textContent = j.translation || j.translated || j.lyrics || "Kein Text verfügbar.";
+    statusText.textContent = "Übersetzung geladen 🇩🇪";
 
   } catch (e) {
     translatedTextEl.textContent = "Fehler beim Laden der Datei.";
@@ -128,9 +149,7 @@ if (j.translation) {
   }
 }
 
-// ------------------------------------------------------
-// 🧠 Spiellogik & Buttons
-// ------------------------------------------------------
+// --------- SPIELLOGIK -----------
 const guessBtn = document.getElementById("guessBtn");
 const revealBtn = document.getElementById("revealBtn");
 const hintBtn = document.getElementById("hintBtn");
@@ -141,62 +160,80 @@ const resultEl = document.getElementById("result");
 const hintEl = document.getElementById("hint");
 const streakEl = document.getElementById("streak");
 const bestStreakEl = document.getElementById("bestStreak");
+const triesLeftEl = document.getElementById("triesLeft");
 
-let streak = Number(localStorage.getItem("sr_streak") || 0);
-let best = Number(localStorage.getItem("sr_bestStreak") || 0);
+let streak = Number(localStorage.getItem("lit_streak") || 0);
+let best = Number(localStorage.getItem("lit_best") || 0);
+let tries = 3;
+let solved = false;
 streakEl.textContent = streak;
 bestStreakEl.textContent = best;
+triesLeftEl.textContent = `Versuche übrig: ${tries}`;
 
 function normalize(s) {
   return (s || "").toLowerCase().replace(/[^a-z0-9äöüß ]/gi, "").trim();
 }
 
-function saveProgress(reset = false) {
-  const key = new Date().toISOString().slice(0, 10);
-  localStorage.setItem("sr_lastDay", key);
-  if (reset) {
-    streak = 0;
-  } else {
+function updateStorage(win) {
+  if (win) {
     streak++;
     if (streak > best) best = streak;
+  } else {
+    streak = 0;
   }
-  localStorage.setItem("sr_streak", streak);
-  localStorage.setItem("sr_bestStreak", best);
+  localStorage.setItem("lit_streak", streak);
+  localStorage.setItem("lit_best", best);
   streakEl.textContent = streak;
   bestStreakEl.textContent = best;
 }
 
 guessBtn.addEventListener("click", () => {
-  if (!window.current) return;
+  if (!window.current || solved) return;
   const guess = normalize(guessInput.value);
   const a = normalize(window.current.artist);
   const t = normalize(window.current.title);
 
+  if (!guess) return;
+
+  tries--;
+  triesLeftEl.textContent = `Versuche übrig: ${tries}`;
+
   if (guess.includes(a) || guess.includes(t)) {
     resultEl.style.color = "var(--success)";
     resultEl.textContent = `✅ Richtig! ${window.current.artist} – ${window.current.title}`;
-    saveProgress(false);
+    updateStorage(true);
+    solved = true;
+    guessBtn.disabled = true;
+    guessInput.disabled = true;
+    hintBtn.disabled = true;
+    hintEl.textContent = "Keine Hinweise mehr nach Lösung.";
+  } else if (tries <= 0) {
+    resultEl.style.color = "var(--danger)";
+    resultEl.textContent = `❌ Keine Versuche mehr! Lösung: ${window.current.artist} – ${window.current.title}`;
+    updateStorage(false);
+    guessBtn.disabled = true;
+    guessInput.disabled = true;
+    hintBtn.disabled = true;
   } else {
     resultEl.style.color = "var(--danger)";
-    resultEl.textContent = "❌ Falsch — versuch’s morgen wieder!";
-    saveProgress(true);
+    resultEl.textContent = `Falsch! Noch ${tries} Versuch${tries===1?"":"e"} übrig.`;
   }
-  guessBtn.disabled = true;
-  guessInput.disabled = true;
 });
 
 revealBtn.addEventListener("click", () => {
   if (!window.current) return;
   resultEl.style.color = "var(--muted)";
   resultEl.textContent = `👀 Lösung: ${window.current.artist} – ${window.current.title}`;
-  saveProgress(true);
+  updateStorage(false);
   guessBtn.disabled = true;
   guessInput.disabled = true;
+  hintBtn.disabled = true;
+  hintEl.textContent = "Keine Hinweise nach Lösung.";
 });
 
 hintBtn.addEventListener("click", () => {
-  if (!window.current) return;
-  hintEl.textContent = `Künstler beginnt mit "${window.current.artist[0]}".`;
+  if (!window.current || solved) return;
+  hintEl.textContent = `Der Künstler beginnt mit "${window.current.artist[0]}".`;
 });
 
 themeBtn.addEventListener("click", () => {
@@ -206,12 +243,8 @@ themeBtn.addEventListener("click", () => {
   themeBtn.textContent = cur === "dark" ? "☀️" : "🌙";
 });
 
-document.getElementById("retryBtn").addEventListener("click", loadGameFromJson);
-
-// Initial starten
+// Initial
 loadGameFromJson();
 </script>
-
-
 </body>
 </html>
