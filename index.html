@@ -5,68 +5,151 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Lost in Translation 🎯</title>
 <style>
-:root{
-  --bg:#eef3fa; --card:#ffffffcc; --muted:#6b7280;
-  --accent:#007aff; --success:#16a34a; --danger:#ef4444;
-  --glass-border:rgba(255,255,255,0.6);
-  --radius:16px; --shadow:0 8px 30px rgba(18,25,40,0.08);
+:root {
+  --bg:#eef3fa;
+  --card:#ffffffdd;
+  --text:#111827;
+  --muted:#6b7280;
+  --accent:#007aff;
+  --success:#16a34a;
+  --danger:#ef4444;
+  --glass-border:rgba(0,0,0,0.05);
+  --radius:16px;
+  --shadow:0 8px 30px rgba(18,25,40,0.08);
 }
-[data-theme="dark"]{
-  --bg:linear-gradient(180deg,#080c15,#0b0f1a);
-  --card:rgba(15,18,25,0.6);
-  --muted:#9aa4b2; --accent:#4cb2ff;
-  --glass-border:rgba(255,255,255,0.05);
-  --shadow:0 8px 28px rgba(0,0,0,0.6);
+
+[data-theme="dark"] {
+  --bg:radial-gradient(circle at top left, #0d1117, #0a0e14);
+  --card:rgba(25,30,40,0.85);
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --accent:#4cb2ff;
+  --glass-border:rgba(255,255,255,0.08);
+  --shadow:0 8px 30px rgba(0,0,0,0.7);
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{
-  font-family:-apple-system,Segoe UI,Roboto,Arial;
+
+* {box-sizing:border-box;margin:0;padding:0}
+body {
+  font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   background:var(--bg);
+  color:var(--text);
   min-height:100vh;
   display:flex;
   justify-content:center;
   align-items:flex-start;
   padding:30px;
   overflow:auto;
-  transition:background 0.4s;
+  transition:background 0.4s, color 0.4s;
 }
-.frame{
-  max-width:900px;width:100%;
+
+.frame {
+  max-width:900px;
+  width:100%;
   background:var(--card);
   border-radius:22px;
   padding:26px;
   border:1px solid var(--glass-border);
-  backdrop-filter:blur(12px) saturate(160%);
+  backdrop-filter:blur(14px) saturate(160%);
   box-shadow:var(--shadow);
   animation:fadeIn .4s ease;
 }
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px}
-h1{font-size:24px;margin:0}
-p.sub{color:var(--muted);font-size:13px}
-button{cursor:pointer;border:none;border-radius:10px;font-weight:600;transition:all 0.2s}
-.btn{padding:9px 12px}
-.primary{background:linear-gradient(90deg,var(--accent),#63b6ff);color:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.1)}
-.primary:hover{transform:scale(1.03)}
-.ghost{background:transparent;color:var(--muted)}
-.ghost:hover{color:var(--accent)}
-main{display:flex;flex-wrap:wrap;gap:18px}
-.card{flex:2;min-width:300px;padding:14px;border:1px solid var(--glass-border);border-radius:14px;background:var(--card)}
-.side{flex:1;min-width:260px;display:flex;flex-direction:column;gap:12px}
-.text-area{
-  font-family:ui-monospace,Menlo,monospace;
-  white-space:pre-wrap;height:320px;overflow:auto;
-  padding:10px;font-size:15px;border-radius:10px;
-  background:transparent;border:1px dashed rgba(0,0,0,0.1)
+@keyframes fadeIn {from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none}}
+
+header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-bottom:16px;
 }
-.panel{background:var(--card);padding:12px;border-radius:12px;border:1px solid var(--glass-border)}
-input[type="text"]{
-  width:100%;padding:10px;border-radius:10px;
-  border:1px solid rgba(0,0,0,0.1);font-size:15px
+h1 {font-size:24px;margin:0}
+p.sub {color:var(--muted);font-size:13px}
+
+button {
+  cursor:pointer;
+  border:none;
+  border-radius:10px;
+  font-weight:600;
+  transition:all 0.2s ease;
 }
-.muted{color:var(--muted);font-size:13px}
-footer{margin-top:14px;text-align:center;font-size:13px;color:var(--muted)}
-@media(max-width:860px){main{flex-direction:column}.text-area{height:280px}}
+.btn {padding:9px 12px}
+.primary {
+  background:linear-gradient(90deg,var(--accent),#63b6ff);
+  color:#fff;
+  box-shadow:0 2px 6px rgba(0,0,0,0.15);
+}
+.primary:hover {transform:scale(1.03)}
+.ghost {
+  background:transparent;
+  color:var(--muted);
+}
+.ghost:hover {color:var(--accent)}
+
+main {display:flex;flex-wrap:wrap;gap:18px}
+.card {
+  flex:2;
+  min-width:300px;
+  padding:14px;
+  border:1px solid var(--glass-border);
+  border-radius:14px;
+  background:var(--card);
+}
+.side {
+  flex:1;
+  min-width:260px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.text-area {
+  font-family: ui-monospace, Menlo, monospace;
+  white-space:pre-wrap;
+  height:320px;
+  overflow:auto;
+  padding:10px;
+  font-size:15px;
+  border-radius:10px;
+  background:transparent;
+  border:1px dashed rgba(0,0,0,0.1);
+}
+[data-theme="dark"] .text-area {
+  border:1px dashed rgba(255,255,255,0.1);
+}
+
+.panel {
+  background:var(--card);
+  padding:12px;
+  border-radius:12px;
+  border:1px solid var(--glass-border);
+}
+input[type="text"] {
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid rgba(0,0,0,0.1);
+  font-size:15px;
+  background:rgba(255,255,255,0.8);
+  transition:all 0.2s;
+}
+[data-theme="dark"] input[type="text"] {
+  background:rgba(255,255,255,0.08);
+  color:var(--text);
+  border:1px solid rgba(255,255,255,0.1);
+}
+input[type="text"]:focus {
+  outline:none;
+  border-color:var(--accent);
+  box-shadow:0 0 0 2px rgba(0,122,255,0.2);
+}
+
+.muted {color:var(--muted);font-size:13px}
+footer {margin-top:14px;text-align:center;font-size:13px;color:var(--muted)}
+
+@media(max-width:860px) {
+  main{flex-direction:column}
+  .text-area{height:280px}
+}
 </style>
 </head>
 <body>
@@ -74,7 +157,7 @@ footer{margin-top:14px;text-align:center;font-size:13px;color:var(--muted)}
 <header>
   <div>
     <h1>Lost in Translation 🌍</h1>
-    <p class="sub">3 Versuche • Übersetze das Rätsel richtig • Baue deinen Streak auf!</p>
+    <p class="sub">3 Versuche • Übersetze das Rätsel richtig • Halte deinen Streak!</p>
   </div>
   <div>
     <button class="btn ghost" id="themeBtn">🌙</button>
@@ -117,7 +200,7 @@ footer{margin-top:14px;text-align:center;font-size:13px;color:var(--muted)}
   </aside>
 </main>
 
-<footer><small>Du hast nur 3 Versuche. Errate die Übersetzung und halte deinen Streak am Leben!</small></footer>
+<footer><small>Du hast 3 Versuche pro Tag. Errate die Übersetzung und halte deinen Streak!</small></footer>
 </div>
 
 <script>
@@ -192,7 +275,6 @@ guessBtn.addEventListener("click", () => {
   const guess = normalize(guessInput.value);
   const a = normalize(window.current.artist);
   const t = normalize(window.current.title);
-
   if (!guess) return;
 
   tries--;
@@ -206,14 +288,16 @@ guessBtn.addEventListener("click", () => {
     guessBtn.disabled = true;
     guessInput.disabled = true;
     hintBtn.disabled = true;
+    revealBtn.disabled = true;
     hintEl.textContent = "Keine Hinweise mehr nach Lösung.";
   } else if (tries <= 0) {
     resultEl.style.color = "var(--danger)";
-    resultEl.textContent = `❌ Keine Versuche mehr! Lösung: ${window.current.artist} – ${window.current.title}`;
+    resultEl.textContent = `❌ Keine Versuche mehr!`;
     updateStorage(false);
     guessBtn.disabled = true;
     guessInput.disabled = true;
     hintBtn.disabled = true;
+    revealBtn.disabled = false;
   } else {
     resultEl.style.color = "var(--danger)";
     resultEl.textContent = `Falsch! Noch ${tries} Versuch${tries===1?"":"e"} übrig.`;
@@ -221,13 +305,14 @@ guessBtn.addEventListener("click", () => {
 });
 
 revealBtn.addEventListener("click", () => {
-  if (!window.current) return;
+  if (!window.current || solved) return; // kein Reveal wenn schon gelöst
   resultEl.style.color = "var(--muted)";
   resultEl.textContent = `👀 Lösung: ${window.current.artist} – ${window.current.title}`;
   updateStorage(false);
   guessBtn.disabled = true;
   guessInput.disabled = true;
   hintBtn.disabled = true;
+  revealBtn.disabled = true;
   hintEl.textContent = "Keine Hinweise nach Lösung.";
 });
 
@@ -243,7 +328,6 @@ themeBtn.addEventListener("click", () => {
   themeBtn.textContent = cur === "dark" ? "☀️" : "🌙";
 });
 
-// Initial
 loadGameFromJson();
 </script>
 </body>
