@@ -3,195 +3,217 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lost in Translation 🎯</title>
+<title>Lost in Translation 🌍</title>
 <style>
 :root {
-  --bg:#eef3fa;
-  --card:#ffffffdd;
-  --text:#111827;
-  --muted:#6b7280;
-  --accent:#007aff;
-  --success:#16a34a;
-  --danger:#ef4444;
-  --glass-border:rgba(0,0,0,0.05);
-  --radius:16px;
-  --shadow:0 8px 30px rgba(18,25,40,0.08);
+  --bg: #f3f6fb;
+  --card: #ffffffcc;
+  --muted: #6b7280;
+  --text: #1e293b;
+  --accent: #007aff;
+  --success: #16a34a;
+  --danger: #ef4444;
+  --highlight: #f59e0b;
+  --radius: 16px;
+  --shadow: 0 8px 30px rgba(18, 25, 40, 0.08);
+  --glass-border: rgba(255,255,255,0.6);
 }
 
 [data-theme="dark"] {
-  --bg: radial-gradient(circle at top left, #0b0f18, #05070d);
-  --card: rgba(18, 22, 30, 0.9);
-  --text: #eaeef7;
-  --muted: #9ca3af;
+  --bg: radial-gradient(circle at top left, #0a0e17, #05070d);
+  --card: rgba(20, 25, 35, 0.9);
+  --text: #e9eefb;
+  --muted: #9ba3b0;
   --accent: #3b82f6;
   --success: #22c55e;
   --danger: #ef4444;
-  --glass-border: rgba(255,255,255,0.06);
-  --shadow: 0 8px 40px rgba(0,0,0,0.8);
+  --highlight: #facc15;
+  --shadow: 0 8px 40px rgba(0, 0, 0, 0.8);
+  --glass-border: rgba(255,255,255,0.05);
 }
 
-[data-theme="dark"] .text-area {
-  border: 1px dashed rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.03);
-  color: var(--text);
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-[data-theme="dark"] input[type="text"] {
-  background: rgba(255,255,255,0.08);
-  color: var(--text);
-  border: 1px solid rgba(255,255,255,0.15);
-}
-
-[data-theme="dark"] .panel {
-  background: rgba(25, 30, 40, 0.8);
-  border: 1px solid rgba(255,255,255,0.06);
-}
-
-[data-theme="dark"] .primary {
-  background: linear-gradient(90deg, #2563eb, #3b82f6);
-  color: #fff;
-  box-shadow: 0 2px 6px rgba(59,130,246,0.4);
-}
-
-[data-theme="dark"] .ghost:hover {
-  color: var(--accent);
-}
-
-
-* {box-sizing:border-box;margin:0;padding:0}
 body {
-  font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:flex-start;
-  padding:30px;
-  overflow:auto;
-  transition:background 0.4s, color 0.4s;
+  font-family: "Inter", -apple-system, Segoe UI, Roboto, Arial;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 30px;
 }
 
 .frame {
-  max-width:900px;
-  width:100%;
-  background:var(--card);
-  border-radius:22px;
-  padding:26px;
-  border:1px solid var(--glass-border);
-  backdrop-filter:blur(14px) saturate(160%);
-  box-shadow:var(--shadow);
-  animation:fadeIn .4s ease;
+  max-width: 900px;
+  width: 100%;
+  background: var(--card);
+  border-radius: 22px;
+  padding: 26px;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px) saturate(140%);
 }
-@keyframes fadeIn {from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none}}
 
+/* --- Header --- */
 header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:12px;
-  margin-bottom:16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
 }
-h1 {font-size:24px;margin:0}
-p.sub {color:var(--muted);font-size:13px}
+
+header .left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.app-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(59,130,246,0.4);
+}
+
+h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+p.sub {
+  color: var(--muted);
+  font-size: 13px;
+}
 
 button {
-  cursor:pointer;
-  border:none;
-  border-radius:10px;
-  font-weight:600;
-  transition:all 0.2s ease;
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
-.btn {padding:9px 12px}
-.primary {
-  background:linear-gradient(90deg,var(--accent),#63b6ff);
-  color:#fff;
-  box-shadow:0 2px 6px rgba(0,0,0,0.15);
-}
-.primary:hover {transform:scale(1.03)}
-.ghost {
-  background:transparent;
-  color:var(--muted);
-}
-.ghost:hover {color:var(--accent)}
 
-main {display:flex;flex-wrap:wrap;gap:18px}
+.btn {
+  padding: 9px 12px;
+}
+
+.primary {
+  background: linear-gradient(90deg, var(--accent), #63b6ff);
+  color: #fff;
+}
+
+.ghost {
+  background: transparent;
+  color: var(--muted);
+}
+
+.ghost:hover {
+  color: var(--text);
+}
+
+main {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
 .card {
-  flex:2;
-  min-width:300px;
-  padding:14px;
-  border:1px solid var(--glass-border);
-  border-radius:14px;
-  background:var(--card);
+  flex: 2;
+  min-width: 300px;
+  padding: 14px;
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  background: var(--card);
 }
+
 .side {
-  flex:1;
-  min-width:260px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
+
 .text-area {
   font-family: ui-monospace, Menlo, monospace;
-  white-space:pre-wrap;
-  height:320px;
-  overflow:auto;
-  padding:10px;
-  font-size:15px;
-  border-radius:10px;
-  background:transparent;
-  border:1px dashed rgba(0,0,0,0.1);
-}
-[data-theme="dark"] .text-area {
-  border:1px dashed rgba(255,255,255,0.1);
+  white-space: pre-wrap;
+  height: 320px;
+  overflow: auto;
+  padding: 10px;
+  font-size: 15px;
+  border-radius: 10px;
+  background: transparent;
+  border: 1px dashed rgba(255,255,255,0.1);
+  color: var(--text);
 }
 
 .panel {
-  background:var(--card);
-  padding:12px;
-  border-radius:12px;
-  border:1px solid var(--glass-border);
+  background: var(--card);
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
 }
+
 input[type="text"] {
-  width:100%;
-  padding:10px;
-  border-radius:10px;
-  border:1px solid rgba(0,0,0,0.1);
-  font-size:15px;
-  background:rgba(255,255,255,0.8);
-  transition:all 0.2s;
-}
-[data-theme="dark"] input[type="text"] {
-  background:rgba(255,255,255,0.08);
-  color:var(--text);
-  border:1px solid rgba(255,255,255,0.1);
-}
-input[type="text"]:focus {
-  outline:none;
-  border-color:var(--accent);
-  box-shadow:0 0 0 2px rgba(0,122,255,0.2);
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.08);
+  color: var(--text);
+  font-size: 15px;
 }
 
-.muted {color:var(--muted);font-size:13px}
-footer {margin-top:14px;text-align:center;font-size:13px;color:var(--muted)}
+input::placeholder {
+  color: var(--muted);
+}
 
-@media(max-width:860px) {
-  main{flex-direction:column}
-  .text-area{height:280px}
+.muted {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+footer {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* --- Kontraststarke Streakanzeige --- */
+.streak-display {
+  color: var(--highlight);
+  font-weight: 700;
+  text-shadow: 0 0 6px rgba(250,204,21,0.4);
+}
+
+/* --- Buttons deaktiviert --- */
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 </style>
 </head>
+
 <body>
-<div class="frame" id="app" data-theme="light">
+<div class="frame" id="app" data-theme="dark">
 <header>
-  <div>
-    <h1>Lost in Translation 🌍</h1>
-    <p class="sub">3 Versuche • Übersetze das Rätsel richtig • Halte deinen Streak!</p>
+  <div class="left">
+    <img src="icon.png" alt="App Icon" class="app-icon" />
+    <div>
+      <h1>Lost in Translation 🌍</h1>
+      <p class="sub">3 Versuche • Übersetze das Rätsel richtig • Halte deinen Streak!</p>
+    </div>
   </div>
-  <div>
-    <button class="btn ghost" id="themeBtn">🌙</button>
-  </div>
+  <button class="btn ghost" id="themeBtn">☀️</button>
 </header>
 
 <main>
@@ -200,7 +222,7 @@ footer {margin-top:14px;text-align:center;font-size:13px;color:var(--muted)}
       <div class="muted">Datum: <span id="dateLabel"></span></div>
       <div class="muted">Status: <span id="statusText">lade…</span></div>
     </div>
-    <div id="translatedText" class="text-area">Text wird geladen…</div>
+    <div id="translatedText" class="text-area">Songtext wird geladen…</div>
   </section>
 
   <aside class="side">
@@ -212,14 +234,12 @@ footer {margin-top:14px;text-align:center;font-size:13px;color:var(--muted)}
         <button class="btn ghost" id="revealBtn">👀 Lösung</button>
       </div>
       <div id="result" style="margin-top:10px;font-weight:700"></div>
-      <p class="muted" id="triesLeft"></p>
+      <div class="muted" style="margin-top:4px">Versuche übrig: <span id="attemptsLeft">3</span></div>
     </div>
 
     <div class="panel">
       <div class="muted">🔥 Streak</div>
-      <div style="font-size:18px;font-weight:700">
-        Heute: <span id="streak">0</span> • Best: <span id="bestStreak">0</span>
-      </div>
+      <div class="streak-display">Heute: <span id="streak">0</span> • Best: <span id="bestStreak">0</span></div>
     </div>
 
     <div class="panel">
@@ -230,7 +250,9 @@ footer {margin-top:14px;text-align:center;font-size:13px;color:var(--muted)}
   </aside>
 </main>
 
-<footer><small>Du hast 3 Versuche pro Tag. Errate die Übersetzung und halte deinen Streak!</small></footer>
+<footer>
+  <small>Du hast 3 Versuche pro Tag. Errate die Übersetzung und halte deinen Streak!</small>
+</footer>
 </div>
 
 <script>
@@ -239,6 +261,7 @@ async function loadGameFromJson() {
   const translatedTextEl = document.getElementById('translatedText');
   const statusText = document.getElementById('statusText');
   const dateLabel = document.getElementById('dateLabel');
+
   dateLabel.textContent = new Date().toLocaleDateString("de-DE");
 
   try {
@@ -255,47 +278,44 @@ async function loadGameFromJson() {
     window.current = { artist: j.artist, title: j.title };
     translatedTextEl.textContent = j.translation || j.translated || j.lyrics || "Kein Text verfügbar.";
     statusText.textContent = "Übersetzung geladen 🇩🇪";
-
   } catch (e) {
     translatedTextEl.textContent = "Fehler beim Laden der Datei.";
     statusText.textContent = "Fehler";
   }
 }
 
-// --------- SPIELLOGIK -----------
 const guessBtn = document.getElementById("guessBtn");
 const revealBtn = document.getElementById("revealBtn");
 const hintBtn = document.getElementById("hintBtn");
 const themeBtn = document.getElementById("themeBtn");
-
 const guessInput = document.getElementById("guessInput");
 const resultEl = document.getElementById("result");
 const hintEl = document.getElementById("hint");
 const streakEl = document.getElementById("streak");
 const bestStreakEl = document.getElementById("bestStreak");
-const triesLeftEl = document.getElementById("triesLeft");
+const attemptsLeftEl = document.getElementById("attemptsLeft");
 
-let streak = Number(localStorage.getItem("lit_streak") || 0);
-let best = Number(localStorage.getItem("lit_best") || 0);
-let tries = 3;
+let streak = Number(localStorage.getItem("sr_streak") || 0);
+let best = Number(localStorage.getItem("sr_bestStreak") || 0);
+let attempts = 3;
 let solved = false;
+
 streakEl.textContent = streak;
 bestStreakEl.textContent = best;
-triesLeftEl.textContent = `Versuche übrig: ${tries}`;
 
 function normalize(s) {
   return (s || "").toLowerCase().replace(/[^a-z0-9äöüß ]/gi, "").trim();
 }
 
-function updateStorage(win) {
-  if (win) {
+function saveProgress(reset = false) {
+  if (reset) {
+    streak = 0;
+  } else {
     streak++;
     if (streak > best) best = streak;
-  } else {
-    streak = 0;
   }
-  localStorage.setItem("lit_streak", streak);
-  localStorage.setItem("lit_best", best);
+  localStorage.setItem("sr_streak", streak);
+  localStorage.setItem("sr_bestStreak", best);
   streakEl.textContent = streak;
   bestStreakEl.textContent = best;
 }
@@ -305,50 +325,47 @@ guessBtn.addEventListener("click", () => {
   const guess = normalize(guessInput.value);
   const a = normalize(window.current.artist);
   const t = normalize(window.current.title);
-  if (!guess) return;
 
-  tries--;
-  triesLeftEl.textContent = `Versuche übrig: ${tries}`;
+  attempts--;
+  attemptsLeftEl.textContent = attempts;
 
   if (guess.includes(a) || guess.includes(t)) {
     resultEl.style.color = "var(--success)";
     resultEl.textContent = `✅ Richtig! ${window.current.artist} – ${window.current.title}`;
-    updateStorage(true);
+    saveProgress(false);
     solved = true;
     guessBtn.disabled = true;
     guessInput.disabled = true;
-    hintBtn.disabled = true;
     revealBtn.disabled = true;
-    hintEl.textContent = "Keine Hinweise mehr nach Lösung.";
-  } else if (tries <= 0) {
-    resultEl.style.color = "var(--danger)";
-    resultEl.textContent = `❌ Keine Versuche mehr!`;
-    updateStorage(false);
-    guessBtn.disabled = true;
-    guessInput.disabled = true;
     hintBtn.disabled = true;
-    revealBtn.disabled = false;
+  } else if (attempts > 0) {
+    resultEl.style.color = "var(--danger)";
+    resultEl.textContent = `❌ Falsch! Du hast noch ${attempts} Versuch${attempts === 1 ? "" : "e"}.`;
   } else {
     resultEl.style.color = "var(--danger)";
-    resultEl.textContent = `Falsch! Noch ${tries} Versuch${tries===1?"":"e"} übrig.`;
+    resultEl.textContent = "❌ Keine Versuche mehr – morgen wieder!";
+    guessBtn.disabled = true;
+    guessInput.disabled = true;
+    revealBtn.disabled = true;
+    hintBtn.disabled = true;
+    saveProgress(true);
   }
 });
 
 revealBtn.addEventListener("click", () => {
-  if (!window.current || solved) return; // kein Reveal wenn schon gelöst
+  if (!window.current || solved) return;
   resultEl.style.color = "var(--muted)";
   resultEl.textContent = `👀 Lösung: ${window.current.artist} – ${window.current.title}`;
-  updateStorage(false);
+  saveProgress(true);
   guessBtn.disabled = true;
   guessInput.disabled = true;
-  hintBtn.disabled = true;
   revealBtn.disabled = true;
-  hintEl.textContent = "Keine Hinweise nach Lösung.";
+  hintBtn.disabled = true;
 });
 
 hintBtn.addEventListener("click", () => {
   if (!window.current || solved) return;
-  hintEl.textContent = `Der Künstler beginnt mit "${window.current.artist[0]}".`;
+  hintEl.textContent = `Künstler beginnt mit "${window.current.artist[0]}".`;
 });
 
 themeBtn.addEventListener("click", () => {
