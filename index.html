@@ -3,40 +3,40 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lost in Translation 🌍 | Songrätsel</title>
+<title>Lost in Translation 🌍</title>
 
-<!-- 🌐 Social Preview -->
 <meta property="og:title" content="Lost in Translation 🌍 – Das Übersetzungs-Rätselspiel" />
 <meta property="og:description" content="Errate den Song anhand seiner Übersetzung! Du hast 3 Versuche – halte deinen Streak und sammle Punkte. 🔥" />
 <meta property="og:image" content="https://www.lostintranslation.site/icon.png" />
 <meta property="og:url" content="https://www.lostintranslation.site" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="theme-color" content="#007aff" />
-
-<link rel="icon" type="image/png" href="icon.png" />
-
 <style>
 :root {
   --bg: #f3f6fb;
   --card: #ffffffcc;
   --muted: #6b7280;
+  --text: #1e293b;
   --accent: #007aff;
   --success: #16a34a;
   --danger: #ef4444;
-  --glass-border: rgba(255, 255, 255, 0.6);
+  --highlight: #f59e0b;
   --radius: 16px;
   --shadow: 0 8px 30px rgba(18, 25, 40, 0.08);
+  --glass-border: rgba(255,255,255,0.6);
 }
 
 [data-theme="dark"] {
-  --bg: #0e1118;
-  --card: #1b1f27;
-  --muted: #9ba3b3;
-  --accent: #4cb2ff;
+  --bg: radial-gradient(circle at top left, #0a0e17, #05070d);
+  --card: rgba(20, 25, 35, 0.9);
+  --text: #e9eefb;
+  --muted: #9ba3b0;
+  --accent: #3b82f6;
   --success: #22c55e;
-  --danger: #f87171;
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --shadow: 0 6px 25px rgba(0, 0, 0, 0.7);
+  --danger: #ef4444;
+  --highlight: #facc15;
+  --shadow: 0 8px 40px rgba(0, 0, 0, 0.8);
+  --glass-border: rgba(255,255,255,0.05);
 }
 
 * {
@@ -46,15 +46,14 @@
 }
 
 body {
-  font-family: -apple-system, Segoe UI, Roboto, Arial;
+  font-family: "Inter", -apple-system, Segoe UI, Roboto, Arial;
   background: var(--bg);
+  color: var(--text);
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   padding: 30px;
-  overflow: auto;
-  transition: background 0.3s ease;
 }
 
 .frame {
@@ -64,30 +63,36 @@ body {
   border-radius: 22px;
   padding: 26px;
   border: 1px solid var(--glass-border);
-  backdrop-filter: blur(10px) saturate(140%);
   box-shadow: var(--shadow);
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+  backdrop-filter: blur(10px) saturate(140%);
 }
 
+/* --- Header --- */
 header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
+  justify-content: space-between;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+header .left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.app-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(59,130,246,0.4);
 }
 
 h1 {
-  font-size: 24px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-h1 img {
-  width: 28px;
-  height: 28px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
 }
 
 p.sub {
@@ -100,11 +105,11 @@ button {
   border: none;
   border-radius: 10px;
   font-weight: 600;
+  transition: all 0.2s ease;
 }
 
 .btn {
   padding: 9px 12px;
-  transition: 0.2s;
 }
 
 .primary {
@@ -112,13 +117,13 @@ button {
   color: #fff;
 }
 
-.primary:hover {
-  opacity: 0.9;
-}
-
 .ghost {
   background: transparent;
   color: var(--muted);
+}
+
+.ghost:hover {
+  color: var(--text);
 }
 
 main {
@@ -153,12 +158,8 @@ main {
   font-size: 15px;
   border-radius: 10px;
   background: transparent;
-  border: 1px dashed rgba(0, 0, 0, 0.1);
-  color: inherit;
-}
-
-[data-theme="dark"] .text-area {
-  border-color: rgba(255, 255, 255, 0.1);
+  border: 1px dashed rgba(255,255,255,0.1);
+  color: var(--text);
 }
 
 .panel {
@@ -172,14 +173,14 @@ input[type="text"] {
   width: 100%;
   padding: 10px;
   border-radius: 10px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.08);
+  color: var(--text);
   font-size: 15px;
-  background: transparent;
-  color: inherit;
 }
 
-[data-theme="dark"] input[type="text"] {
-  border-color: rgba(255, 255, 255, 0.15);
+input::placeholder {
+  color: var(--muted);
 }
 
 .muted {
@@ -192,6 +193,19 @@ footer {
   text-align: center;
   font-size: 13px;
   color: var(--muted);
+}
+
+/* --- Kontraststarke Streakanzeige --- */
+.streak-display {
+  color: var(--highlight);
+  font-weight: 700;
+  text-shadow: 0 0 6px rgba(250,204,21,0.4);
+}
+
+/* --- Buttons deaktiviert --- */
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .explainer {
@@ -214,19 +228,17 @@ footer {
 </head>
 
 <body>
-<div class="frame" id="app" data-theme="light">
-  <header>
+<div class="frame" id="app" data-theme="dark">
+<header>
+  <div class="left">
+    <img src="icon.png" alt="App Icon" class="app-icon" />
     <div>
-      <h1>
-        <img src="icon.png" alt="Icon" />
-        Lost in Translation 🌍
-      </h1>
-      <p class="sub">Errate den Song aus der Übersetzung – halte deinen Streak und sammle Punkte!</p>
+      <h1>Lost in Translation 🌍</h1>
+      <p class="sub">3 Versuche • Übersetze das Rätsel richtig • Halte deinen Streak!</p>
     </div>
-    <div>
-      <button class="btn ghost" id="themeBtn">🌙</button>
-    </div>
-  </header>
+  </div>
+  <button class="btn ghost" id="themeBtn">☀️</button>
+</header>
 
   <div class="explainer">
     🎯 <b>Spielerklärung:</b><br>
@@ -234,59 +246,57 @@ footer {
     Du hast <b>drei Versuche</b>. Wenn du richtig liegst, bekommst du einen Punkt für deinen Streak 🔥.  
     Du kannst Hinweise anzeigen, aber keine mehr, wenn du die Lösung gefunden hast.
   </div>
+  
+<main>
+  <section class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div class="muted">Datum: <span id="dateLabel"></span></div>
+      <div class="muted">Status: <span id="statusText">lade…</span></div>
+    </div>
+    <div id="translatedText" class="text-area">Songtext wird geladen…</div>
+  </section>
 
-  <main>
-    <section class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <div class="muted">Datum: <span id="dateLabel"></span></div>
-        <div class="muted">Status: <span id="statusText">lade…</span></div>
+  <aside class="side">
+    <div class="panel">
+      <div class="muted">Dein Tipp</div>
+      <input id="guessInput" type="text" placeholder="Song oder Künstler..." autocomplete="off" />
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn primary" id="guessBtn">Raten</button>
+        <button class="btn ghost" id="revealBtn">👀 Lösung</button>
       </div>
-      <div id="translatedText" class="text-area">Songtext wird geladen…</div>
-    </section>
+      <div id="result" style="margin-top:10px;font-weight:700"></div>
+      <div class="muted" style="margin-top:4px">Versuche übrig: <span id="attemptsLeft">3</span></div>
+    </div>
 
-    <aside class="side">
-      <div class="panel">
-        <div class="muted">Dein Tipp</div>
-        <input id="guessInput" type="text" placeholder="Song oder Künstler..." autocomplete="off" />
-        <div style="display:flex;gap:8px;margin-top:8px">
-          <button class="btn primary" id="guessBtn">Raten</button>
-          <button class="btn ghost" id="revealBtn">👀 Lösung</button>
-        </div>
-        <div id="triesLeft" class="muted" style="margin-top:6px">Versuche übrig: 3</div>
-        <div id="result" style="margin-top:10px;font-weight:700"></div>
-      </div>
+    <div class="panel">
+      <div class="muted">🔥 Streak</div>
+      <div class="streak-display">Heute: <span id="streak">0</span> • Best: <span id="bestStreak">0</span></div>
+    </div>
 
-      <div class="panel">
-        <div class="muted">🔥 Streak</div>
-        <div style="font-size:18px;font-weight:700;color:var(--accent)">
-          Heute: <span id="streak">0</span> • Best: <span id="bestStreak">0</span>
-        </div>
-      </div>
+    <div class="panel">
+      <div class="muted">💡 Hinweis</div>
+      <p id="hint" class="muted">Noch keine Hinweise</p>
+      <button class="btn ghost" id="hintBtn" style="margin-top:8px">Tipp anzeigen</button>
+    </div>
+  </aside>
+</main>
 
-      <div class="panel">
-        <div class="muted">💡 Hinweis</div>
-        <p id="hint" class="muted">Noch keine Hinweise</p>
-        <button class="btn ghost" id="hintBtn" style="margin-top:8px">Tipp anzeigen</button>
-      </div>
-    </aside>
-  </main>
-
-  <footer>
-    <small>Du hast 3 Versuche pro Tag. Errate die Übersetzung und halte deinen Streak!</small>
-  </footer>
+<footer>
+  <small>Du hast 3 Versuche pro Tag. Errate die Übersetzung und halte deinen Streak!</small>
+</footer>
 </div>
 
 <script>
 async function loadGameFromJson() {
   const today = new Date().toISOString().slice(0, 10);
-  const translatedTextEl = document.getElementById("translatedText");
-  const statusText = document.getElementById("statusText");
-  const dateLabel = document.getElementById("dateLabel");
+  const translatedTextEl = document.getElementById('translatedText');
+  const statusText = document.getElementById('statusText');
+  const dateLabel = document.getElementById('dateLabel');
 
   dateLabel.textContent = new Date().toLocaleDateString("de-DE");
 
   try {
-    const res = await fetch("./data/song_of_the_day.json", { cache: "no-store" });
+    const res = await fetch('./data/song_of_the_day.json', { cache: 'no-store' });
     if (!res.ok) throw new Error("Keine Datei gefunden");
     const j = await res.json();
 
@@ -299,7 +309,7 @@ async function loadGameFromJson() {
     window.current = { artist: j.artist, title: j.title };
     translatedTextEl.textContent = j.translation || j.translated || j.lyrics || "Kein Text verfügbar.";
     statusText.textContent = "Übersetzung geladen 🇩🇪";
-  } catch {
+  } catch (e) {
     translatedTextEl.textContent = "Fehler beim Laden der Datei.";
     statusText.textContent = "Fehler";
   }
@@ -309,17 +319,16 @@ const guessBtn = document.getElementById("guessBtn");
 const revealBtn = document.getElementById("revealBtn");
 const hintBtn = document.getElementById("hintBtn");
 const themeBtn = document.getElementById("themeBtn");
-
 const guessInput = document.getElementById("guessInput");
 const resultEl = document.getElementById("result");
 const hintEl = document.getElementById("hint");
 const streakEl = document.getElementById("streak");
 const bestStreakEl = document.getElementById("bestStreak");
-const triesLeftEl = document.getElementById("triesLeft");
+const attemptsLeftEl = document.getElementById("attemptsLeft");
 
 let streak = Number(localStorage.getItem("sr_streak") || 0);
 let best = Number(localStorage.getItem("sr_bestStreak") || 0);
-let tries = 3;
+let attempts = 3;
 let solved = false;
 
 streakEl.textContent = streak;
@@ -330,9 +339,12 @@ function normalize(s) {
 }
 
 function saveProgress(reset = false) {
-  if (reset) streak = 0;
-  else streak++;
-  if (streak > best) best = streak;
+  if (reset) {
+    streak = 0;
+  } else {
+    streak++;
+    if (streak > best) best = streak;
+  }
   localStorage.setItem("sr_streak", streak);
   localStorage.setItem("sr_bestStreak", best);
   streakEl.textContent = streak;
@@ -340,10 +352,13 @@ function saveProgress(reset = false) {
 }
 
 guessBtn.addEventListener("click", () => {
-  if (!window.current || solved || tries <= 0) return;
+  if (!window.current || solved) return;
   const guess = normalize(guessInput.value);
   const a = normalize(window.current.artist);
   const t = normalize(window.current.title);
+
+  attempts--;
+  attemptsLeftEl.textContent = attempts;
 
   if (guess.includes(a) || guess.includes(t)) {
     resultEl.style.color = "var(--success)";
@@ -354,19 +369,17 @@ guessBtn.addEventListener("click", () => {
     guessInput.disabled = true;
     revealBtn.disabled = true;
     hintBtn.disabled = true;
+  } else if (attempts > 0) {
+    resultEl.style.color = "var(--danger)";
+    resultEl.textContent = `❌ Falsch! Du hast noch ${attempts} Versuch${attempts === 1 ? "" : "e"}.`;
   } else {
-    tries--;
-    triesLeftEl.textContent = `Versuche übrig: ${tries}`;
-    if (tries <= 0) {
-      resultEl.style.color = "var(--danger)";
-      resultEl.textContent = "❌ Keine Versuche mehr!";
-      saveProgress(true);
-      guessBtn.disabled = true;
-      guessInput.disabled = true;
-    } else {
-      resultEl.style.color = "var(--danger)";
-      resultEl.textContent = "❌ Falsch – versuch’s nochmal!";
-    }
+    resultEl.style.color = "var(--danger)";
+    resultEl.textContent = "❌ Keine Versuche mehr – morgen wieder!";
+    guessBtn.disabled = true;
+    guessInput.disabled = true;
+    revealBtn.disabled = true;
+    hintBtn.disabled = true;
+    saveProgress(true);
   }
 });
 
