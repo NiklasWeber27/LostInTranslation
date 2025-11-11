@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Lost in Translation 🌍</title>
 
-<meta property="og:title" content="Lost in Translation 🌍 – Das Übersetzungs-Rätselspiel" />
-<meta property="og:description" content="Errate den Song anhand seiner Übersetzung! Du hast 3 Versuche – halte deinen Streak und sammle Punkte. 🔥" />
+<meta property="og:title" content="Lost in Translation 🌍 – Das Emoji-Rätselspiel" />
+<meta property="og:description" content="Errate den Song anhand der Emojis! Drei Versuche pro Tag – halte deinen Streak! 🔥" />
 <meta property="og:image" content="https://www.lostintranslation.site/icon.png" />
 <meta property="og:url" content="https://www.lostintranslation.site" />
 <meta name="twitter:card" content="summary_large_image" />
@@ -234,7 +234,7 @@ button:disabled {
     <img src="icon.png" alt="App Icon" class="app-icon" />
     <div>
       <h1>Lost in Translation 🌍</h1>
-      <p class="sub">3 Versuche • Übersetze das Rätsel richtig • Halte deinen Streak!</p>
+      <p class="sub">3 Versuche • Errate den Song anhand der Emojis • Halte deinen Streak!</p>
     </div>
   </div>
   <button class="btn ghost" id="themeBtn">☀️</button>
@@ -242,10 +242,12 @@ button:disabled {
 
   <div class="explainer">
     🎯 <b>Spielerklärung:</b><br>
-    Lies den übersetzten Songtext und errate den Titel oder Künstler!  
-    Du hast <b>drei Versuche</b>. Wenn du richtig liegst, bekommst du einen Punkt für deinen Streak 🔥.  
-    Du kannst Hinweise anzeigen, aber keine mehr, wenn du die Lösung gefunden hast.
+    Beim Übersetzen eines bekannten Songs ist etwas schief gelaufen, und nun sind nur noch Emojis da. Schau dir die Emojis an und errate, welchen Song sie darstellen!  
+    Du hast <b>drei Versuche</b>, um den richtigen Titel oder Künstler zu erraten.  
+    Wenn du es richtig hast, steigt dein Streak 🔥 – wenn nicht, fängst du wieder bei 0 an.  
+    Tipp: Die Emojis beschreiben meist den Titel oder die Stimmung des Songs 🎶
   </div>
+
   
 <main>
   <section class="card">
@@ -253,7 +255,7 @@ button:disabled {
       <div class="muted">Datum: <span id="dateLabel"></span></div>
       <div class="muted">Status: <span id="statusText">lade…</span></div>
     </div>
-    <div id="translatedText" class="text-area">Songtext wird geladen…</div>
+    <div id="translatedText" class="text-area">Song-Emojis werden geladen…</div>
   </section>
 
   <aside class="side">
@@ -282,7 +284,7 @@ button:disabled {
 </main>
 
 <footer>
-  <small>Du hast 3 Versuche pro Tag. Errate die Übersetzung und halte deinen Streak!</small>
+  <small>Errate den Song des Tages anhand der Emojis 🎵</small>
 </footer>
 </div>
 
@@ -307,8 +309,21 @@ async function loadGameFromJson() {
     }
 
     window.current = { artist: j.artist, title: j.title };
-    translatedTextEl.textContent = j.translation || j.translated || j.lyrics || "Kein Text verfügbar.";
-    statusText.textContent = "Übersetzung geladen 🇩🇪";
+    translatedTextEl.textContent = j.translation || j.translated || j.lyrics || "Keine Emojis verfügbar.";
+    statusText.textContent = "Emojis geladen 🇩🇪";
+
+        // Wenn heute bereits geraten wurde → sofort Lösung anzeigen
+    const lastPlayed = localStorage.getItem("sr_lastPlayed");
+    if (lastPlayed === today) {
+      document.getElementById("result").textContent = `✅ Lösung: ${j.artist} – ${j.title}`;
+      document.getElementById("result").style.color = "var(--success)";
+      document.getElementById("guessBtn").disabled = true;
+      document.getElementById("guessInput").disabled = true;
+      document.getElementById("revealBtn").disabled = true;
+      document.getElementById("hintBtn").disabled = true;
+      statusText.textContent = "Heute schon gespielt ✅";
+    }
+
   } catch (e) {
     translatedTextEl.textContent = "Fehler beim Laden der Datei.";
     statusText.textContent = "Fehler";
