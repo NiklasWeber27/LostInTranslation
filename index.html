@@ -155,7 +155,7 @@ main {
   height: 320px;
   overflow: auto;
   padding: 10px;
-  font-size: 15px;
+  font-size: 30px;
   border-radius: 10px;
   background: transparent;
   border: 1px dashed rgba(255,255,255,0.1);
@@ -325,6 +325,7 @@ const hintEl = document.getElementById("hint");
 const streakEl = document.getElementById("streak");
 const bestStreakEl = document.getElementById("bestStreak");
 const attemptsLeftEl = document.getElementById("attemptsLeft");
+const statusText = document.getElementById("statusText");
 
 let streak = Number(localStorage.getItem("sr_streak") || 0);
 let best = Number(localStorage.getItem("sr_bestStreak") || 0);
@@ -334,6 +335,20 @@ let solved = false;
 streakEl.textContent = streak;
 bestStreakEl.textContent = best;
 
+// === TAGESPRÜFUNG: Hat der Spieler heute schon gespielt? ===
+const today = new Date().toISOString().slice(0, 10);
+const lastPlayed = localStorage.getItem("sr_lastPlayed");
+
+if (lastPlayed === today) {
+  solved = true;
+  guessBtn.disabled = true;
+  guessInput.disabled = true;
+  revealBtn.disabled = true;
+  hintBtn.disabled = true;
+  statusText.textContent = "Heute schon gespielt ✅";
+}
+
+// === Hilfsfunktionen ===
 function normalize(s) {
   return (s || "").toLowerCase().replace(/[^a-z0-9äöüß ]/gi, "").trim();
 }
@@ -351,6 +366,15 @@ function saveProgress(reset = false) {
   bestStreakEl.textContent = best;
 }
 
+function endGame() {
+  guessBtn.disabled = true;
+  guessInput.disabled = true;
+  revealBtn.disabled = true;
+  hintBtn.disabled = true;
+  localStorage.setItem("sr_lastPlayed", today);
+}
+
+// === Spiel-Logik ===
 guessBtn.addEventListener("click", () => {
   if (!window.current || solved) return;
   const guess = normalize(guessInput.value);
@@ -365,21 +389,15 @@ guessBtn.addEventListener("click", () => {
     resultEl.textContent = `✅ Richtig! ${window.current.artist} – ${window.current.title}`;
     saveProgress(false);
     solved = true;
-    guessBtn.disabled = true;
-    guessInput.disabled = true;
-    revealBtn.disabled = true;
-    hintBtn.disabled = true;
+    endGame();
   } else if (attempts > 0) {
     resultEl.style.color = "var(--danger)";
     resultEl.textContent = `❌ Falsch! Du hast noch ${attempts} Versuch${attempts === 1 ? "" : "e"}.`;
   } else {
     resultEl.style.color = "var(--danger)";
     resultEl.textContent = "❌ Keine Versuche mehr – morgen wieder!";
-    guessBtn.disabled = true;
-    guessInput.disabled = true;
-    revealBtn.disabled = true;
-    hintBtn.disabled = true;
     saveProgress(true);
+    endGame();
   }
 });
 
@@ -388,10 +406,8 @@ revealBtn.addEventListener("click", () => {
   resultEl.style.color = "var(--muted)";
   resultEl.textContent = `👀 Lösung: ${window.current.artist} – ${window.current.title}`;
   saveProgress(true);
-  guessBtn.disabled = true;
-  guessInput.disabled = true;
-  revealBtn.disabled = true;
-  hintBtn.disabled = true;
+  solved = true;
+  endGame();
 });
 
 hintBtn.addEventListener("click", () => {
@@ -408,5 +424,6 @@ themeBtn.addEventListener("click", () => {
 
 loadGameFromJson();
 </script>
+
 </body>
 </html>
