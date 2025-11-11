@@ -2,51 +2,29 @@ import fs from "fs";
 import path from "path";
 
 const RAW_FILE = "data/songs_raw.json";
-const CACHE_FILE = "data/cache_translations.json";
 const OUTPUT_FILE = "data/song_of_the_day.json";
-
-async function translateText(text, lang = "de") {
-  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${lang}`;
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-    return data?.responseData?.translatedText || text;
-  } catch (err) {
-    console.error("⚠️ Fehler bei Übersetzung:", err);
-    return text;
-  }
-}
 
 async function main() {
   console.log("🎵 Generiere Song des Tages...");
 
+  // Songs laden
   const songs = JSON.parse(fs.readFileSync(RAW_FILE, "utf-8"));
-  const cache = fs.existsSync(CACHE_FILE)
-    ? JSON.parse(fs.readFileSync(CACHE_FILE, "utf-8"))
-    : {};
 
+  // Song des Tages bestimmen
   const song = songs[new Date().getDate() % songs.length];
   const key = `${song.artist} - ${song.title}`;
 
-  let translated = cache[key];
+  console.log(`🎶 Ausgewählt: ${key}`);
 
-  if (!translated) {
-    console.log(`🌐 Übersetze "${key}"...`);
-    translated = await translateText(song.lyrics, "de");
-    cache[key] = translated;
-    fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2));
-  } else {
-    console.log(`🗂 Übersetzung aus Cache geladen: ${key}`);
-  }
-
+  // Ergebnis zusammenstellen
   const result = {
     date: new Date().toISOString().slice(0, 10),
     artist: song.artist,
     title: song.title,
-    lyrics: song.lyrics,
-    translation: translated
+    lyrics: song.lyrics
   };
 
+  // Ausgabeordner sicherstellen
   fs.mkdirSync("data", { recursive: true });
   fs.writeFileSync(OUTPUT_FILE, JSON.stringify(result, null, 2));
 
